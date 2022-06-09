@@ -64,8 +64,8 @@ class Grid {
   }
 
   getCell(position) {
-    let cellX = Math.floor(position[0] / this.step);
-    let cellY = Math.floor(position[1] / this.step);
+    let cellX = Math.floor(position.x / this.step);
+    let cellY = Math.floor(position.y / this.step);
     return this.GRID[cellX][cellY];
     /* console.log([cellX, cellY]); */
   }
