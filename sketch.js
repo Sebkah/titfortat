@@ -8,7 +8,7 @@ function setup() {
   GRID = new Grid(step);
   GRID.initialize();
 
-  UNITMANAGER = new UnitManager(5000, GRID);
+  UNITMANAGER = new UnitManager(200, GRID);
   UNITMANAGER.initialize();
 
   /*   unit = new Unit([400, 120], GRID);

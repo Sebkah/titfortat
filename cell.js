@@ -4,6 +4,7 @@ class Cell {
     this.height = height;
     this.UNITS = new Array();
     this.color = [random(150, 255), random(0, 180), random(0, 255)];
+    this.marking = false;
   }
 
   draw() {
@@ -12,8 +13,22 @@ class Cell {
     rect(this.corner[0] + 1, this.corner[1] + 1, this.height - 2);
   }
 
-  subscribe() {
-    /*  this.color = [0, 255, 0]; */
+  subscribe(unit) {
+    if (this.marking) this.markUnit(unit);
+    if (!this.UNITS.includes(unit)) this.UNITS.push(unit);
+  }
+  unsubscribe(unit) {
+    if (this.marking) this.unmarkUnit(unit);
+    this.UNITS = this.UNITS.filter((current_unit) => {
+      return current_unit != unit;
+    });
+  }
+
+  markUnit(unit) {
+    unit.color = [255, 0, 255];
+  }
+  unmarkUnit(unit) {
+    unit.color = this.color;
   }
 }
 
@@ -33,11 +48,13 @@ class Grid {
 
       this.GRID.push(ROW);
     }
+    this.GRID[1][1].marking = true;
     console.log(this.GRID);
   }
 
   draw() {
-    stroke(255);
+    console.log(this.GRID[1][1].UNITS.length);
+
     strokeWeight(1);
     this.GRID.forEach((row) => {
       row.forEach((cell) => {
@@ -51,79 +68,5 @@ class Grid {
     let cellY = Math.floor(position[1] / this.step);
     return this.GRID[cellX][cellY];
     /* console.log([cellX, cellY]); */
-  }
-}
-
-class Unit {
-  constructor(position, GRID) {
-    this.position = position;
-    this.GRID = GRID;
-    this.CELL;
-    this.color;
-  }
-
-  initialize() {
-    this.CELL = this.GRID.getCell(this.position);
-    this.color = this.CELL.color;
-  }
-
-  compute() {
-    /* this.roam(); */
-    this.followFlow();
-    if (this.position[0] >= width) this.position[0] = width - 1;
-    if (this.position[1] >= width) this.position[1] = width - 1;
-    if (this.position[0] <= 0) this.position[0] = 1;
-    if (this.position[1] <= 0) this.position[1] = 1;
-
-    this.CELL = this.GRID.getCell(this.position);
-    this.CELL.subscribe();
-    /*     console.log(this.CELL); */
-  }
-
-  draw() {
-    let color = this.color;
-    stroke(color[0], color[1], color[2]);
-    strokeWeight(20);
-    point(this.position[0], this.position[1]);
-  }
-
-  roam() {
-    this.position[0] += (Math.random() - 0.5) * 10;
-    this.position[1] += (Math.random() - 0.5) * 10;
-  }
-
-  followFlow() {
-    this.position[0] +=
-      (noise(this.position[0] * 5, this.position[1] * 5) - 0.5) * 10;
-    this.position[1] +=
-      (noise(this.position[0] + 4, this.position[1] + 4) - 0.5) * 10;
-  }
-}
-
-class UnitManager {
-  constructor(numberOfUnits, GRID) {
-    this.numberOfUnits = numberOfUnits;
-    this.UNITS = new Array();
-    this.GRID = GRID;
-  }
-
-  initialize() {
-    for (let i = 0; i < this.numberOfUnits; i++) {
-      let unit = new Unit([random(0, 800), random(0, 800)], this.GRID);
-      unit.initialize();
-      this.UNITS.push(unit);
-    }
-  }
-
-  compute() {
-    this.UNITS.forEach((unit) => {
-      unit.compute();
-    });
-  }
-
-  draw() {
-    this.UNITS.forEach((unit) => {
-      unit.draw();
-    });
   }
 }
